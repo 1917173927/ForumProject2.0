@@ -13,15 +13,15 @@ type LoginController struct{}
 func (lc *LoginController) LoginHandler(c *gin.Context) {
 	var req services.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.JSON(c.Writer, http.StatusBadRequest, "Invalid request body", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	resp, err := services.Login(req)
 	if err != nil {
-		utils.JSON(c.Writer, http.StatusUnauthorized, err.Error(), nil)
+		utils.JsonErrorResponse(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	utils.JSON(c.Writer, http.StatusOK, "Login successful", resp)
+	utils.JsonSuccessResponse(c, resp)
 }

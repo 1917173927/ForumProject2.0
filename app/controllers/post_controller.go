@@ -13,58 +13,58 @@ type PostController struct{}
 func (pc *PostController) CreatePostHandler(c *gin.Context) {
 	var req services.PostRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.JSON(c.Writer, http.StatusBadRequest, "Invalid request body", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	resp, err := services.CreatePost(req)
 	if err != nil {
-		utils.JSON(c.Writer, http.StatusInternalServerError, err.Error(), nil)
+		utils.JsonErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.JSON(c.Writer, http.StatusOK, "Post created successfully", resp)
+	utils.JsonSuccessResponse(c, resp)
 }
 
 func (pc *PostController) GetPostsHandler(c *gin.Context) {
 	posts, err := services.GetPosts()
 	if err != nil {
-		utils.JSON(c.Writer, http.StatusInternalServerError, err.Error(), nil)
+		utils.JsonErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.JSON(c.Writer, http.StatusOK, "Success", gin.H{"posts": posts})
+	utils.JsonSuccessResponse(c, gin.H{"posts": posts})
 }
 
 func (pc *PostController) DeletePostHandler(c *gin.Context) {
 	postIDStr := c.Query("post_id")
 	if postIDStr == "" {
-		utils.JSON(c.Writer, http.StatusBadRequest, "post_id parameter is required", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "post_id parameter is required")
 		return
 	}
 	postID, err := strconv.ParseUint(postIDStr, 10, 64)
 	if err != nil {
-		utils.JSON(c.Writer, http.StatusBadRequest, "post_id must be a positive integer", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "post_id must be a positive integer")
 		return
 	}
 
 	userIDStr := c.Query("user_id")
 	if userIDStr == "" {
-		utils.JSON(c.Writer, http.StatusBadRequest, "user_id parameter is required", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "user_id parameter is required")
 		return
 	}
 	userID, err := strconv.ParseUint(userIDStr, 10, 64)
 	if err != nil {
-		utils.JSON(c.Writer, http.StatusBadRequest, "user_id must be a positive integer", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "user_id must be a positive integer")
 		return
 	}
 
 	if err := services.DeletePost(uint(postID), uint(userID)); err != nil {
-		utils.JSON(c.Writer, http.StatusInternalServerError, err.Error(), nil)
+		utils.JsonErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.JSON(c.Writer, http.StatusOK, "Post deleted successfully", nil)
+	utils.JsonSuccessResponse(c, nil)
 }
 
 func (pc *PostController) UpdatePostHandler(c *gin.Context) {
@@ -74,30 +74,30 @@ func (pc *PostController) UpdatePostHandler(c *gin.Context) {
 		Content string `json:"content"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.JSON(c.Writer, http.StatusBadRequest, "Invalid request body", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	if req.PostID == 0 {
-		utils.JSON(c.Writer, http.StatusBadRequest, "post_id is required", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "post_id is required")
 		return
 	}
 
 	if req.UserID == 0 {
-		utils.JSON(c.Writer, http.StatusBadRequest, "user_id is required", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "user_id is required")
 		return
 	}
 
 	if req.Content == "" {
-		utils.JSON(c.Writer, http.StatusBadRequest, "content cannot be empty", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "content cannot be empty")
 		return
 	}
 
 	resp, err := services.UpdatePost(req.PostID, req.UserID, req.Content)
 	if err != nil {
-		utils.JSON(c.Writer, http.StatusInternalServerError, err.Error(), nil)
+		utils.JsonErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.JSON(c.Writer, http.StatusOK, "Post updated successfully", resp)
+	utils.JsonSuccessResponse(c, resp)
 }

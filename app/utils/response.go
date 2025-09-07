@@ -1,22 +1,24 @@
 package utils
 
 import (
-	"encoding/json"
 	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
-type Response struct {
-	Status  string      `json:"status"`
-	Message string      `json:"message"`
-	Data    interface{} `json:"data,omitempty"`
-}
-
-func JSON(w http.ResponseWriter, status int, message string, data interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	json.NewEncoder(w).Encode(Response{
-		Status:  http.StatusText(status),
-		Message: message,
-		Data:    data,
+func JsonResponse(c *gin.Context, httpStatusCode int, code int, msg string, data interface{}) {
+	c.JSON(httpStatusCode, gin.H{
+		"code": code,
+		"msg":  msg,
+		"data": data,
 	})
 }
+
+func JsonSuccessResponse(c *gin.Context, data interface{}) {
+	JsonResponse(c, http.StatusOK, 200, "OK", data)
+}
+
+func JsonErrorResponse(c *gin.Context, code int, msg string) {
+	JsonResponse(c, http.StatusInternalServerError, code, msg, nil)
+}
+

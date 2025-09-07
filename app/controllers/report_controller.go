@@ -15,37 +15,37 @@ type ReportController struct{}
 func (rc *ReportController) CreateReportHandler(c *gin.Context) {
 	var req services.ReportRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.JSON(c.Writer, http.StatusBadRequest, "Invalid request body", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	resp, err := services.CreateReport(req)
 	if err != nil {
-		utils.JSON(c.Writer, http.StatusInternalServerError, err.Error(), nil)
+		utils.JsonErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.JSON(c.Writer, http.StatusOK, "Report created successfully", resp)
+	utils.JsonSuccessResponse(c, resp)
 }
 
 func (rc *ReportController) GetReportsHandler(c *gin.Context) {
 	reports, err := services.GetReports()
 	if err != nil {
-		utils.JSON(c.Writer, http.StatusInternalServerError, err.Error(), nil)
+		utils.JsonErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.JSON(c.Writer, http.StatusOK, "Success", gin.H{"reports": reports})
+	utils.JsonSuccessResponse(c, gin.H{"reports": reports})
 }
 
 func (rc *ReportController) GetPendingReportsHandler(c *gin.Context) {
 	reports, err := services.GetPendingReports()
 	if err != nil {
-		utils.JSON(c.Writer, http.StatusInternalServerError, err.Error(), nil)
+		utils.JsonErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	utils.JSON(c.Writer, http.StatusOK, "Success", gin.H{"reports": reports})
+	utils.JsonSuccessResponse(c, gin.H{"reports": reports})
 }
 
 func (rc *ReportController) ReviewReportHandler(c *gin.Context) {
@@ -56,14 +56,14 @@ func (rc *ReportController) ReviewReportHandler(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
-		utils.JSON(c.Writer, http.StatusBadRequest, "Invalid request body", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "Invalid request body")
 		return
 	}
 
 	// 验证用户是否为管理员
 	db, err := database.GetDBConnection()
 	if err != nil {
-		utils.JSON(c.Writer, http.StatusInternalServerError, "Failed to connect to database", nil)
+		utils.JsonErrorResponse(c, http.StatusInternalServerError, "Failed to connect to database")
 		return
 	}
 
@@ -71,12 +71,12 @@ func (rc *ReportController) ReviewReportHandler(c *gin.Context) {
 	var account models.Account
 	if err := db.Unscoped().Where("user_id = ?", req.UserID).Order("user_id").First(&account).Error; err != nil {
 		fmt.Printf("Error verifying user: %v\n", err)
-		utils.JSON(c.Writer, http.StatusInternalServerError, "Failed to verify user", nil)
+		utils.JsonErrorResponse(c, http.StatusInternalServerError, "Failed to verify user")
 		return
 	}
 
 	if account.UserType != 2 {
-		utils.JSON(c.Writer, http.StatusForbidden, "Only admin can review reports", nil)
+		utils.JsonErrorResponse(c, http.StatusForbidden, "Only admin can review reports")
 		return
 	}
 
@@ -84,19 +84,19 @@ func (rc *ReportController) ReviewReportHandler(c *gin.Context) {
 	if req.Approval == 1 {
 		// 通过审核，删除对应帖子
 		if err := services.DeletePostByReportID(req.ReportID); err != nil {
-			utils.JSON(c.Writer, http.StatusInternalServerError, err.Error(), nil)
+			utils.JsonErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 	} else if req.Approval == 2 {
 		// 驳回举报，仅更新举报状态
 		if err := services.UpdateReportStatus(req.ReportID, 2); err != nil {
-			utils.JSON(c.Writer, http.StatusInternalServerError, err.Error(), nil)
+			utils.JsonErrorResponse(c, http.StatusInternalServerError, err.Error())
 			return
 		}
 	} else {
-		utils.JSON(c.Writer, http.StatusBadRequest, "Invalid approval status", nil)
+		utils.JsonErrorResponse(c, http.StatusBadRequest, "Invalid approval status")
 		return
 	}
 
-	utils.JSON(c.Writer, http.StatusOK, "Report reviewed successfully", nil)
+	utils.JsonSuccessResponse(c, nil)
 }
