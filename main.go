@@ -20,6 +20,9 @@ func main() {
 	if err := migrations.CreateReportsTable(db); err != nil {
 		panic(fmt.Sprintf("Failed to create reports table: %v", err))
 	}
+	if err := migrations.RenameReporterToUser(db); err != nil {
+		panic(fmt.Sprintf("Failed to rename reporter_id to user_id: %v", err))
+	}
 
 	// Initialize services
 	if err := services.InitServices(); err != nil {

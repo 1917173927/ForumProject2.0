@@ -9,7 +9,7 @@ import (
 
 type ReportRequest struct {
 	PostID    uint   `json:"post_id"`
-	ReporterID uint   `json:"reporter_id"`
+	UserID    uint   `json:"user_id"`
 	Reason    string `json:"reason"`
 	Type      string `json:"type"`
 }
@@ -17,15 +17,15 @@ type ReportRequest struct {
 type ReportResponse struct {
 	ID        uint   `json:"id"`
 	PostID    uint   `json:"post_id"`
-	ReporterID uint   `json:"reporter_id"`
+	UserID    uint   `json:"user_id"`
 	Reason    string `json:"reason"`
 	Status    int    `json:"status"`
 	Type      string `json:"type"`
 }
 
 func CreateReport(req ReportRequest) (ReportResponse, error) {
-	if req.PostID == 0 || req.ReporterID == 0 {
-		return ReportResponse{}, errors.New("post_id and reporter_id are required")
+	if req.PostID == 0 || req.UserID == 0 {
+		return ReportResponse{}, errors.New("post_id and user_id are required")
 	}
 
 	if req.Reason == "" {
@@ -43,7 +43,7 @@ func CreateReport(req ReportRequest) (ReportResponse, error) {
 
 	report := models.Report{
 		PostID:    req.PostID,
-		ReporterID: req.ReporterID,
+		UserID:    req.UserID,
 		Reason:    req.Reason,
 		Status:    0,
 		Type:      req.Type,
@@ -59,7 +59,7 @@ func CreateReport(req ReportRequest) (ReportResponse, error) {
 	return ReportResponse{
 		ID:        report.ID,
 		PostID:    report.PostID,
-		ReporterID: report.ReporterID,
+		UserID:    report.UserID,
 		Reason:    report.Reason,
 		Status:    report.Status,
 		Type:      report.Type,

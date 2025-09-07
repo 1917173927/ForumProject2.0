@@ -42,7 +42,7 @@ go mod download
 3. 配置数据库：
 ```bash
 cp config.example.yaml config.yaml
-# 编辑 config.yaml 文件配置数据库连接
+# 编辑 config/config.yaml 文件配置数据库连接
 ```
 
 4. 运行服务：
