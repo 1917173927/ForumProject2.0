@@ -52,6 +52,28 @@ go run cmd/main.go
 
 ## API 文档
 
+### 举报相关API变更
+- 所有举报API中的`reporter_id`字段已统一改为`user_id`
+- 举报请求体示例：
+```json
+{
+  "post_id": 123,
+  "user_id": 456,
+  "reason": "不当内容",
+  "type": "spam"
+}
+```
+
+### 数据库配置
+在`config/database/config.yaml`中配置数据库连接：
+```yaml
+database:
+  host: "127.0.0.1"
+  port: 3306
+  username: "root"
+  password: "your_password"
+```
+
 服务启动后访问：
 - Swagger UI: http://localhost:8080/swagger/index.html
 - API 文档: http://localhost:8080/docs
@@ -60,16 +82,25 @@ go run cmd/main.go
 
 ```
 api-main/
-├── app/
-│   ├── controllers/
-│   ├── models/
-│   ├── services/
-│   └── utils/
-├── config/
-├── cmd/
-│   └── main.go
-└── README.md
+├── app/                  # 应用核心代码
+│   ├── controllers/      # 控制器层
+│   ├── models/           # 数据模型
+│   ├── services/         # 业务逻辑层
+│   └── utils/            # 工具函数
+├── config/               # 配置文件
+│   └── database/         # 数据库相关配置
+│       ├── database.go    # 数据库连接
+│       └── migrations/   # 数据库迁移文件
+├── main.go               # 应用入口
+└── README.md             # 项目文档
 ```
+
+主要文件说明：
+- `main.go`: 应用入口，初始化数据库和服务
+- `app/controllers/`: 处理HTTP请求
+- `app/models/`: 定义数据模型
+- `app/services/`: 业务逻辑实现
+- `config/database/`: 数据库连接和迁移配置
 
 ## 贡献指南
 
