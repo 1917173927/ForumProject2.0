@@ -10,14 +10,15 @@ import (
 )
 
 type LoginRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"Username"`
+	Password string `json:"Password"`
 }
 
 type LoginResponse struct {
-	Username string `json:"username"`
-	UserType int    `json:"user_type"`
-	Name     string `json:"name"`
+	UserID   uint   `json:"UserID"`
+	Username string `json:"Username"`
+	UserType int    `json:"UserType"`
+	Name     string `json:"Name"`
 }
 
 func Login(req LoginRequest) (LoginResponse, error) {
@@ -25,10 +26,7 @@ func Login(req LoginRequest) (LoginResponse, error) {
 		return LoginResponse{}, errors.New("username and password are required")
 	}
 
-	db, err := database.GetDBConnection()
-	if err != nil {
-		return LoginResponse{}, errors.New("database connection error")
-	}
+	db := database.GetDB()
 
 	var account models.Account
 	if err := db.Where("username = ?", req.Username).First(&account).Error; err != nil {
@@ -46,6 +44,7 @@ func Login(req LoginRequest) (LoginResponse, error) {
 	}
 
 	return LoginResponse{
+		UserID:   account.UserID,
 		Username: account.Username,
 		UserType: account.UserType,
 		Name:     account.Name,

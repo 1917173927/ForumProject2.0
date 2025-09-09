@@ -8,9 +8,9 @@ import (
 
 func JsonResponse(c *gin.Context, httpStatusCode int, code int, msg string, data interface{}) {
 	c.JSON(httpStatusCode, gin.H{
-		"code": code,
-		"msg":  msg,
-		"data": data,
+		"Code": code,
+		"Msg":  msg,
+		"Data": data,
 	})
 }
 
@@ -19,6 +19,6 @@ func JsonSuccessResponse(c *gin.Context, data interface{}) {
 }
 
 func JsonErrorResponse(c *gin.Context, code int, msg string) {
-	JsonResponse(c, http.StatusInternalServerError, code, msg, nil)
+	JsonResponse(c, http.StatusOK, 200000 + code, msg, nil)
 }
 

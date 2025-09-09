@@ -7,17 +7,17 @@ import (
 )
 
 type RegisterRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	UserType int    `json:"user_type"`
-	Name     string `json:"name"`
+	Username string `json:"Username"`
+	Password string `json:"Password"`
+	UserType int    `json:"UserType"`
+	Name     string `json:"Name"`
 }
 
 type RegisterResponse struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
-	UserType int    `json:"user_type"`
-	Name     string `json:"name"`
+	Username string `json:"Username"`
+	Password string `json:"Password"`
+	UserType int    `json:"UserType"`
+	Name     string `json:"Name"`
 }
 
 func Register(req RegisterRequest) (RegisterResponse, error) {
@@ -25,10 +25,7 @@ func Register(req RegisterRequest) (RegisterResponse, error) {
 		return RegisterResponse{}, errors.New("missing or invalid fields")
 	}
 
-	db, err := database.GetDBConnection()
-	if err != nil {
-		return RegisterResponse{}, errors.New("database connection error")
-	}
+	db := database.GetDB()
 
 	account := models.Account{
 		Username: req.Username,

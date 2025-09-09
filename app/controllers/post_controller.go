@@ -4,6 +4,7 @@ import (
 	"api-main/app/services"
 	"api-main/app/utils"
 	"net/http"
+
 	"strconv"
 	"github.com/gin-gonic/gin"
 )
@@ -69,9 +70,9 @@ func (pc *PostController) DeletePostHandler(c *gin.Context) {
 
 func (pc *PostController) UpdatePostHandler(c *gin.Context) {
 	var req struct {
-		PostID  uint   `json:"post_id"`
-		UserID  uint   `json:"user_id"`
-		Content string `json:"content"`
+		PostID  uint   `json:"PostID"`
+		UserID  uint   `json:"UserID"`
+		Content string `json:"Content"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		utils.JsonErrorResponse(c, http.StatusBadRequest, "Invalid request body")

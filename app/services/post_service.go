@@ -7,14 +7,14 @@ import (
 )
 
 type PostRequest struct {
-	Content string `json:"content"`
-	UserID  uint   `json:"user_id"`
+	Content string `json:"Content"`
+	UserID  uint   `json:"UserID"`
 }
 
 type PostResponse struct {
-	ID      uint   `json:"id"`
-	Content string `json:"content"`
-	UserID  uint   `json:"user_id"`
+	ID      uint   `json:"ID"`
+	Content string `json:"Content"`
+	UserID  uint   `json:"UserID"`
 }
 
 func CreatePost(req PostRequest) (PostResponse, error) {
@@ -22,10 +22,7 @@ func CreatePost(req PostRequest) (PostResponse, error) {
 		return PostResponse{}, errors.New("content and user_id are required")
 	}
 
-	db, err := database.GetDBConnection()
-	if err != nil {
-		return PostResponse{}, errors.New("database connection error")
-	}
+	db := database.GetDB()
 
 	post := models.Post{
 		Content: req.Content,
@@ -44,10 +41,7 @@ func CreatePost(req PostRequest) (PostResponse, error) {
 }
 
 func GetPosts() ([]models.Post, error) {
-	db, err := database.GetDBConnection()
-	if err != nil {
-		return nil, errors.New("database connection error")
-	}
+	db := database.GetDB()
 
 	var posts []models.Post
 	if err := db.Find(&posts).Error; err != nil {
@@ -58,10 +52,7 @@ func GetPosts() ([]models.Post, error) {
 }
 
 func DeletePost(postID uint, userID uint) error {
-	db, err := database.GetDBConnection()
-	if err != nil {
-		return errors.New("database connection error")
-	}
+	db := database.GetDB()
 
 	var post models.Post
 	if err := db.Where("`post_id` = ? AND `user_id` = ?", postID, userID).First(&post).Error; err != nil {
@@ -80,10 +71,7 @@ func UpdatePost(postID uint, userID uint, content string) (PostResponse, error) 
 		return PostResponse{}, errors.New("content cannot be empty")
 	}
 
-	db, err := database.GetDBConnection()
-	if err != nil {
-		return PostResponse{}, errors.New("database connection error")
-	}
+	db := database.GetDB()
 
 	var post models.Post
 	if err := db.Where("`post_id` = ? AND `user_id` = ?", postID, userID).First(&post).Error; err != nil {

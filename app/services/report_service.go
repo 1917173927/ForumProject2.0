@@ -8,19 +8,19 @@ import (
 )
 
 type ReportRequest struct {
-	PostID    uint   `json:"post_id"`
-	UserID    uint   `json:"user_id"`
-	Reason    string `json:"reason"`
-	Type      string `json:"type"`
+	PostID    uint   `json:"PostID"`
+	UserID    uint   `json:"UserID"`
+	Reason    string `json:"Reason"`
+	Type      string `json:"Type"`
 }
 
 type ReportResponse struct {
-	ID        uint   `json:"id"`
-	PostID    uint   `json:"post_id"`
-	UserID    uint   `json:"user_id"`
-	Reason    string `json:"reason"`
-	Status    int    `json:"status"`
-	Type      string `json:"type"`
+	ID        uint   `json:"ID"`
+	PostID    uint   `json:"PostID"`
+	UserID    uint   `json:"UserID"`
+	Reason    string `json:"Reason"`
+	Status    int    `json:"Status"`
+	Type      string `json:"Type"`
 }
 
 func CreateReport(req ReportRequest) (ReportResponse, error) {
@@ -36,10 +36,7 @@ func CreateReport(req ReportRequest) (ReportResponse, error) {
 		req.Type = "other"
 	}
 
-	db, err := database.GetDBConnection()
-	if err != nil {
-		return ReportResponse{}, errors.New("database connection error")
-	}
+	db := database.GetDB()
 
 	report := models.Report{
 		PostID:    req.PostID,
@@ -67,10 +64,7 @@ func CreateReport(req ReportRequest) (ReportResponse, error) {
 }
 
 func GetReports() ([]models.Report, error) {
-	db, err := database.GetDBConnection()
-	if err != nil {
-		return nil, errors.New("database connection error")
-	}
+	db := database.GetDB()
 
 	var reports []models.Report
 	if err := db.Find(&reports).Error; err != nil {
@@ -81,10 +75,7 @@ func GetReports() ([]models.Report, error) {
 }
 
 func GetPendingReports() ([]models.Report, error) {
-	db, err := database.GetDBConnection()
-	if err != nil {
-		return nil, errors.New("database connection error")
-	}
+	db := database.GetDB()
 
 	var reports []models.Report
 	if err := db.Where("status = ?", 0).Find(&reports).Error; err != nil {
@@ -95,10 +86,7 @@ func GetPendingReports() ([]models.Report, error) {
 }
 
 func DeletePostByReportID(reportID uint) error {
-	db, err := database.GetDBConnection()
-	if err != nil {
-		return errors.New("database connection error")
-	}
+	db := database.GetDB()
 
 	// 获取举报对应的帖子ID
 	var report models.Report
@@ -124,10 +112,7 @@ func UpdateReportStatus(reportID uint, status int) error {
 		return errors.New("invalid status, must be 1(approved) or 2(rejected)")
 	}
 
-	db, err := database.GetDBConnection()
-	if err != nil {
-		return errors.New("database connection error")
-	}
+	db := database.GetDB()
 
 	if err := db.Model(&models.Report{}).Where("id = ?", reportID).Update("status", status).Error; err != nil {
 		return errors.New("failed to update report status")

@@ -5,54 +5,54 @@ import (
 	"api-main/app/services"
 	"api-main/config/database"
 	"fmt"
+	"log"
+
 	"api-main/config/database/migrations"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	// Initialize database
-	db, err := database.GetDBConnection()
-	if err != nil {
-		panic(fmt.Sprintf("Failed to connect database: %v", err))
-	}
+	db := database.GetDB()
 
-	// Run migrations
-	if err := migrations.CreateReportsTable(db); err != nil {
-		panic(fmt.Sprintf("Failed to create reports table: %v", err))
+	// Migrations
+	if err := migrations.CreateTables(db); err != nil {
+		log.Printf("Failed to create tables: %v", err)
+		return
 	}
 	if err := migrations.RenameReporterToUser(db); err != nil {
-		panic(fmt.Sprintf("Failed to rename reporter_id to user_id: %v", err))
+		log.Printf("Failed to rename reporter_id to user_id: %v", err)
+		return
 	}
 
 	// Initialize services
 	if err := services.InitServices(); err != nil {
-		panic(fmt.Sprintf("Failed to initialize services: %v", err))
+		log.Printf("Failed to initialize services: %v", err)
+		return
 	}
 
 	r := gin.Default()
 
-	// User routes
+	// User
 	registerCtrl := controllers.RegisterController{}
 	r.POST("/api/user/reg", registerCtrl.RegisterHandler)
 
 	loginCtrl := controllers.LoginController{}
 	r.POST("/api/user/login", loginCtrl.LoginHandler)
 
-	// Student post routes
+	// Student post
 	postCtrl := controllers.PostController{}
 	r.POST("/api/student/post", postCtrl.CreatePostHandler)
 	r.GET("/api/student/post", postCtrl.GetPostsHandler)
 	r.DELETE("/api/student/post", postCtrl.DeletePostHandler)
 	r.PUT("/api/student/post", postCtrl.UpdatePostHandler)
 
-	// Report routes
+	// Report
 	reportCtrl := controllers.ReportController{}
 	r.POST("/api/student/report-post", reportCtrl.CreateReportHandler)
 	r.GET("/api/student/report-post", reportCtrl.GetReportsHandler)
 	r.GET("/api/admin/report", reportCtrl.GetPendingReportsHandler)
 	r.POST("/api/admin/report", reportCtrl.ReviewReportHandler)
-
-	// TODO: Add admin routes after refactoring
 
 	fmt.Println("Server started at http://localhost:8080")
 	r.Run(":8080")

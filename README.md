@@ -1,4 +1,4 @@
-# API-Main 项目-Bianweizheng
+# API-Main 项目-B
 
 ## 项目简介
 
@@ -52,6 +52,38 @@ go run cmd/main.go
 
 ## API 文档
 
+### 用户登录接口
+- 请求方法: POST
+- 请求路径: /login
+- 请求头: Content-Type: application/json
+- 请求体示例:
+```json
+{
+  "username": "testuser",
+  "password": "password123"
+}
+```
+- 成功响应示例:
+```json
+{
+  "code": 200,
+  "msg": "OK",
+  "data": {
+    "username": "testuser",
+    "user_type": 1,
+    "name": "Test User"
+  }
+}
+```
+- 错误响应示例:
+```json
+{
+  "code": 401,
+  "msg": "invalid password",
+  "data": null
+}
+```
+
 ### 举报相关API变更
 - 所有举报API中的`reporter_id`字段已统一改为`user_id`
 - 举报请求体示例：
@@ -61,6 +93,267 @@ go run cmd/main.go
   "user_id": 456,
   "reason": "不当内容",
   "type": "spam"
+}
+```
+
+### 用户注册接口
+- 请求方法: POST
+- 请求路径: /register
+- 请求头: Content-Type: application/json
+- 请求体示例:
+```json
+{
+  "username": "newuser",
+  "password": "newpassword123",
+  "user_type": 1,
+  "name": "New User"
+}
+```
+- 成功响应示例:
+```json
+{
+  "code": 200,
+  "msg": "OK",
+  "data": {
+    "username": "newuser",
+    "password": "newpassword123",
+    "user_type": 1,
+    "name": "New User"
+  }
+}
+```
+- 错误响应示例:
+```json
+{
+  "code": 400,
+  "msg": "missing or invalid fields",
+  "data": null
+}
+```
+
+### 帖子管理接口
+
+#### 创建帖子
+- 请求方法: POST
+- 请求路径: /posts
+- 请求头: Content-Type: application/json
+- 请求体示例:
+```json
+{
+  "content": "这是一个测试帖子",
+  "user_id": 123
+}
+```
+- 成功响应示例:
+```json
+{
+  "code": 200,
+  "msg": "OK",
+  "data": {
+    "id": 456,
+    "content": "这是一个测试帖子",
+    "user_id": 123
+  }
+}
+```
+- 错误响应示例:
+```json
+{
+  "code": 400,
+  "msg": "content and user_id are required",
+  "data": null
+}
+```
+
+#### 获取帖子列表
+- 请求方法: GET
+- 请求路径: /posts
+- 成功响应示例:
+```json
+{
+  "code": 200,
+  "msg": "OK",
+  "data": {
+    "posts": [
+      {
+        "post_id": 456,
+        "content": "这是一个测试帖子",
+        "user_id": 123
+      },
+      {
+        "post_id": 789,
+        "content": "另一个帖子",
+        "user_id": 456
+      }
+    ]
+  }
+}
+```
+
+#### 删除帖子
+- 请求方法: DELETE
+- 请求路径: /posts?post_id=456&user_id=123
+- 成功响应示例:
+```json
+{
+  "code": 200,
+  "msg": "OK",
+  "data": null
+}
+```
+- 错误响应示例:
+```json
+{
+  "code": 404,
+  "msg": "post not found or unauthorized",
+  "data": null
+}
+```
+
+#### 更新帖子
+- 请求方法: PUT
+- 请求路径: /posts
+- 请求头: Content-Type: application/json
+- 请求体示例:
+```json
+{
+  "post_id": 456,
+  "user_id": 123,
+  "content": "更新后的帖子内容"
+}
+```
+- 成功响应示例:
+```json
+{
+  "code": 200,
+  "msg": "OK",
+  "data": {
+    "id": 456,
+    "content": "更新后的帖子内容",
+    "user_id": 123
+  }
+}
+```
+
+### 举报管理接口
+
+#### 创建举报
+- 请求方法: POST
+- 请求路径: /reports
+- 请求头: Content-Type: application/json
+- 请求体示例:
+```json
+{
+  "post_id": 123,
+  "user_id": 456,
+  "reason": "不当内容",
+  "type": "spam"
+}
+```
+- 成功响应示例:
+```json
+{
+  "code": 200,
+  "msg": "OK",
+  "data": {
+    "id": 789,
+    "post_id": 123,
+    "user_id": 456,
+    "reason": "不当内容",
+    "status": 0,
+    "type": "spam"
+  }
+}
+```
+- 错误响应示例:
+```json
+{
+  "code": 400,
+  "msg": "post_id and user_id are required",
+  "data": null
+}
+```
+
+#### 获取举报列表
+- 请求方法: GET
+- 请求路径: /reports
+- 成功响应示例:
+```json
+{
+  "code": 200,
+  "msg": "OK",
+  "data": {
+    "reports": [
+      {
+        "id": 789,
+        "post_id": 123,
+        "user_id": 456,
+        "reason": "不当内容",
+        "status": 0,
+        "type": "spam"
+      },
+      {
+        "id": 790,
+        "post_id": 124,
+        "user_id": 457,
+        "reason": "违规内容",
+        "status": 1,
+        "type": "violence"
+      }
+    ]
+  }
+}
+```
+
+#### 获取待处理举报
+- 请求方法: GET
+- 请求路径: /reports/pending
+- 成功响应示例:
+```json
+{
+  "code": 200,
+  "msg": "OK",
+  "data": {
+    "reports": [
+      {
+        "id": 789,
+        "post_id": 123,
+        "user_id": 456,
+        "reason": "不当内容",
+        "status": 0,
+        "type": "spam"
+      }
+    ]
+  }
+}
+```
+
+#### 审核举报
+- 请求方法: POST
+- 请求路径: /reports/review
+- 请求头: Content-Type: application/json
+- 请求体示例:
+```json
+{
+  "report_id": 789,
+  "approval": 1,
+  "user_id": 1
+}
+```
+- 成功响应示例:
+```json
+{
+  "code": 200,
+  "msg": "OK",
+  "data": null
+}
+```
+- 错误响应示例:
+```json
+{
+  "code": 403,
+  "msg": "Only admin can review reports",
+  "data": null
 }
 ```
 
@@ -74,9 +367,8 @@ database:
   password: "your_password"
 ```
 
-服务启动后访问：
-- Swagger UI: http://localhost:8080/swagger/index.html
-- API 文档: http://localhost:8080/docs
+
+
 
 ## 项目结构
 
