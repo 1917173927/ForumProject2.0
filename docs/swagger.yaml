@@ -1,0 +1,402 @@
+basePath: /
+definitions:
+  services.LoginRequest:
+    properties:
+      Password:
+        type: string
+      Username:
+        type: string
+    type: object
+  services.LoginResponse:
+    properties:
+      Name:
+        type: string
+      UserID:
+        type: integer
+      UserType:
+        type: integer
+      Username:
+        type: string
+    type: object
+  services.PostListResponse:
+    properties:
+      posts:
+        items:
+          $ref: '#/definitions/services.PostResponse'
+        type: array
+    type: object
+  services.PostRequest:
+    properties:
+      Content:
+        type: string
+      UserID:
+        type: integer
+    type: object
+  services.PostResponse:
+    properties:
+      Content:
+        type: string
+      ID:
+        type: integer
+      UserID:
+        type: integer
+    type: object
+  services.RegisterRequest:
+    properties:
+      Name:
+        type: string
+      Password:
+        type: string
+      UserType:
+        type: integer
+      Username:
+        type: string
+    type: object
+  services.RegisterResponse:
+    properties:
+      Name:
+        type: string
+      Password:
+        type: string
+      UserType:
+        type: integer
+      Username:
+        type: string
+    type: object
+  services.ReportListResponse:
+    properties:
+      reports:
+        items:
+          $ref: '#/definitions/services.ReportResponse'
+        type: array
+    type: object
+  services.ReportRequest:
+    properties:
+      PostID:
+        type: integer
+      Reason:
+        type: string
+      Type:
+        type: string
+      UserID:
+        type: integer
+    type: object
+  services.ReportResponse:
+    properties:
+      ID:
+        type: integer
+      PostID:
+        type: integer
+      Reason:
+        type: string
+      Type:
+        type: string
+      UserID:
+        type: integer
+    type: object
+  services.ReviewRequest:
+    properties:
+      ReportID:
+        type: integer
+      Status:
+        type: integer
+    type: object
+  utils.ErrorResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+  utils.SuccessResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@api-main.com
+    name: API Support
+  description: This is the API documentation for API-Main.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: API-Main API
+  version: "1.0"
+paths:
+  /admin/report:
+    post:
+      consumes:
+      - application/json
+      description: Review a report (admin only)
+      parameters:
+      - description: Review request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/services.ReviewRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Review a report
+      tags:
+      - admin
+  /admin/reports:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all pending reports (admin only)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.ReportListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Get pending reports
+      tags:
+      - admin
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return token
+      parameters:
+      - description: Login request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/services.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.LoginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: User login
+      tags:
+      - auth
+  /post:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a post by ID
+      parameters:
+      - description: Post ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/utils.SuccessResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Delete a post
+      tags:
+      - post
+    post:
+      consumes:
+      - application/json
+      description: Create a new post
+      parameters:
+      - description: Post request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/services.PostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Create a post
+      tags:
+      - post
+    put:
+      consumes:
+      - application/json
+      description: Update a post by ID
+      parameters:
+      - description: Post request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/services.PostRequest'
+      - description: Post ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Update a post
+      tags:
+      - post
+  /posts:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all posts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.PostListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Get all posts
+      tags:
+      - post
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: Register request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/services.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.RegisterResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: User registration
+      tags:
+      - auth
+  /report:
+    post:
+      consumes:
+      - application/json
+      description: Create a new report
+      parameters:
+      - description: Report request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/services.ReportRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.ReportResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Create a report
+      tags:
+      - report
+  /reports:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of all reports
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/services.ReportListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/utils.ErrorResponse'
+      summary: Get all reports
+      tags:
+      - report
+swagger: "2.0"

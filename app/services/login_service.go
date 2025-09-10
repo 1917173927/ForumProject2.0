@@ -10,15 +10,15 @@ import (
 )
 
 type LoginRequest struct {
-	Username string `json:"Username"`
-	Password string `json:"Password"`
+	Username string `json:"Username" gorm:"unique;not null"`
+	Password string `json:"Password" gorm:"not null"`
 }
 
 type LoginResponse struct {
-	UserID   uint   `json:"UserID"`
-	Username string `json:"Username"`
-	UserType int    `json:"UserType"`
-	Name     string `json:"Name"`
+	UserID   uint   `json:"UserID" gorm:"not null"`
+	Username string `json:"Username" gorm:"not null"`
+	UserType int    `json:"UserType" gorm:"not null"`
+	Name     string `json:"Name" gorm:"not null"`
 }
 
 func Login(req LoginRequest) (LoginResponse, error) {

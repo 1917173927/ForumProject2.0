@@ -9,8 +9,21 @@ import (
 
 	"api-main/config/database/migrations"
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/gin-swagger"
+	"github.com/swaggo/files"
+	_ "api-main/docs"
 )
 
+// @title API-Main API
+// @version 1.0
+// @description This is the API documentation for API-Main.
+// @termsOfService http://swagger.io/terms/
+// @contact.name API Support
+// @contact.email support@api-main.com
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+// @host localhost:8080
+// @BasePath /
 func main() {
 	// Initialize database
 	db := database.GetDB()
@@ -55,5 +68,8 @@ func main() {
 	r.POST("/api/admin/report", reportCtrl.ReviewReportHandler)
 
 	fmt.Println("Server started at http://localhost:8080")
+	// Swagger UI
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	r.Run(":8080")
 }

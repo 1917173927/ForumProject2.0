@@ -7,14 +7,18 @@ import (
 )
 
 type PostRequest struct {
-	Content string `json:"Content"`
-	UserID  uint   `json:"UserID"`
+	Content string `json:"Content" gorm:"not null"`
+	UserID  uint   `json:"UserID" gorm:"not null"`
 }
 
 type PostResponse struct {
-	ID      uint   `json:"ID"`
-	Content string `json:"Content"`
-	UserID  uint   `json:"UserID"`
+	ID      uint   `json:"ID" gorm:"not null"`
+	Content string `json:"Content" gorm:"not null"`
+	UserID  uint   `json:"UserID" gorm:"not null"`
+}
+
+type PostListResponse struct {
+	Posts []PostResponse `json:"posts"`
 }
 
 func CreatePost(req PostRequest) (PostResponse, error) {

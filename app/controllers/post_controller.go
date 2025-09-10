@@ -11,6 +11,16 @@ import (
 
 type PostController struct{}
 
+// @Summary Create a post
+// @Description Create a new post
+// @Tags post
+// @Accept json
+// @Produce json
+// @Param request body services.PostRequest true "Post request"
+// @Success 200 {object} services.PostResponse
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /post [post]
 func (pc *PostController) CreatePostHandler(c *gin.Context) {
 	var req services.PostRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -27,6 +37,14 @@ func (pc *PostController) CreatePostHandler(c *gin.Context) {
 	utils.JsonSuccessResponse(c, resp)
 }
 
+// @Summary Get all posts
+// @Description Get a list of all posts
+// @Tags post
+// @Accept json
+// @Produce json
+// @Success 200 {object} services.PostListResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /posts [get]
 func (pc *PostController) GetPostsHandler(c *gin.Context) {
 	posts, err := services.GetPosts()
 	if err != nil {
@@ -37,6 +55,16 @@ func (pc *PostController) GetPostsHandler(c *gin.Context) {
 	utils.JsonSuccessResponse(c, gin.H{"posts": posts})
 }
 
+// @Summary Delete a post
+// @Description Delete a post by ID
+// @Tags post
+// @Accept json
+// @Produce json
+// @Param id query string true "Post ID"
+// @Success 200 {object} utils.SuccessResponse
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /post [delete]
 func (pc *PostController) DeletePostHandler(c *gin.Context) {
 	postIDStr := c.Query("post_id")
 	if postIDStr == "" {
@@ -68,6 +96,17 @@ func (pc *PostController) DeletePostHandler(c *gin.Context) {
 	utils.JsonSuccessResponse(c, nil)
 }
 
+// @Summary Update a post
+// @Description Update a post by ID
+// @Tags post
+// @Accept json
+// @Produce json
+// @Param request body services.PostRequest true "Post request"
+// @Param id query string true "Post ID"
+// @Success 200 {object} services.PostResponse
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /post [put]
 func (pc *PostController) UpdatePostHandler(c *gin.Context) {
 	var req struct {
 		PostID  uint   `json:"PostID"`

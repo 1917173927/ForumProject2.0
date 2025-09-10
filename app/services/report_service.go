@@ -8,20 +8,30 @@ import (
 )
 
 type ReportRequest struct {
-	PostID    uint   `json:"PostID"`
-	UserID    uint   `json:"UserID"`
-	Reason    string `json:"Reason"`
-	Type      string `json:"Type"`
+	PostID    uint   `json:"PostID" gorm:"not null"`
+	UserID    uint   `json:"UserID" gorm:"not null"`
+	Reason    string `json:"Reason" gorm:"not null"`
+	Type      string `json:"Type" gorm:"not null"`
 }
 
 type ReportResponse struct {
-	ID        uint   `json:"ID"`
-	PostID    uint   `json:"PostID"`
-	UserID    uint   `json:"UserID"`
-	Reason    string `json:"Reason"`
-	Status    int    `json:"Status"`
-	Type      string `json:"Type"`
+	ID        uint   `json:"ID" gorm:"not null"`
+	PostID    uint   `json:"PostID" gorm:"not null"`
+	UserID    uint   `json:"UserID" gorm:"not null"`
+	Reason    string `json:"Reason" gorm:"not null"`
+	Status    int    `json:"Status" gorm:"not null"`
+	Type      string `json:"Type" gorm:"not null"`
 }
+
+type ReportListResponse struct {
+	Reports []ReportResponse `json:"reports"`
+}
+
+type ReviewRequest struct {
+	ReportID uint `json:"ReportID" gorm:"not null"`
+	Status  int  `json:"Status" gorm:"not null"`
+}
+
 
 func CreateReport(req ReportRequest) (ReportResponse, error) {
 	if req.PostID == 0 || req.UserID == 0 {

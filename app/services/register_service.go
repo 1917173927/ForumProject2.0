@@ -7,17 +7,17 @@ import (
 )
 
 type RegisterRequest struct {
-	Username string `json:"Username"`
-	Password string `json:"Password"`
-	UserType int    `json:"UserType"`
-	Name     string `json:"Name"`
+	Username string `json:"Username" gorm:"not null"`
+	Password string `json:"Password" gorm:"not null"`
+	UserType int    `json:"UserType" gorm:"not null"`
+	Name     string `json:"Name" gorm:"not null"`
 }
 
 type RegisterResponse struct {
-	Username string `json:"Username"`
-	Password string `json:"Password"`
-	UserType int    `json:"UserType"`
-	Name     string `json:"Name"`
+	Username string `json:"Username" gorm:"not null"`
+	Password string `json:"Password" gorm:"not null"`
+	UserType int    `json:"UserType" gorm:"not null"`
+	Name     string `json:"Name" gorm:"not null"`
 }
 
 func Register(req RegisterRequest) (RegisterResponse, error) {

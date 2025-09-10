@@ -10,6 +10,16 @@ import (
 
 type RegisterController struct{}
 
+// @Summary User registration
+// @Description Register a new user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body services.RegisterRequest true "Register request"
+// @Success 200 {object} services.RegisterResponse
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /register [post]
 func (rc *RegisterController) RegisterHandler(c *gin.Context) {
 	var req services.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {

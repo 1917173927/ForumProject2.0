@@ -13,6 +13,16 @@ import (
 
 type ReportController struct{}
 
+// @Summary Create a report
+// @Description Create a new report
+// @Tags report
+// @Accept json
+// @Produce json
+// @Param request body services.ReportRequest true "Report request"
+// @Success 200 {object} services.ReportResponse
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /report [post]
 func (rc *ReportController) CreateReportHandler(c *gin.Context) {
 	var req services.ReportRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -29,6 +39,14 @@ func (rc *ReportController) CreateReportHandler(c *gin.Context) {
 	utils.JsonSuccessResponse(c, resp)
 }
 
+// @Summary Get all reports
+// @Description Get a list of all reports
+// @Tags report
+// @Accept json
+// @Produce json
+// @Success 200 {object} services.ReportListResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /reports [get]
 func (rc *ReportController) GetReportsHandler(c *gin.Context) {
 	reports, err := services.GetReports()
 	if err != nil {
@@ -39,6 +57,14 @@ func (rc *ReportController) GetReportsHandler(c *gin.Context) {
 	utils.JsonSuccessResponse(c, gin.H{"reports": reports})
 }
 
+// @Summary Get pending reports
+// @Description Get a list of all pending reports (admin only)
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Success 200 {object} services.ReportListResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /admin/reports [get]
 func (rc *ReportController) GetPendingReportsHandler(c *gin.Context) {
 	reports, err := services.GetPendingReports()
 	if err != nil {
@@ -49,6 +75,16 @@ func (rc *ReportController) GetPendingReportsHandler(c *gin.Context) {
 	utils.JsonSuccessResponse(c, gin.H{"reports": reports})
 }
 
+// @Summary Review a report
+// @Description Review a report (admin only)
+// @Tags admin
+// @Accept json
+// @Produce json
+// @Param request body services.ReviewRequest true "Review request"
+// @Success 200 {object} utils.SuccessResponse
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /admin/report [post]
 func (rc *ReportController) ReviewReportHandler(c *gin.Context) {
 	var req struct {
 		ReportID uint `json:"ReportID"`

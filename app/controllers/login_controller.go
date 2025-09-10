@@ -10,6 +10,16 @@ import (
 
 type LoginController struct{}
 
+// @Summary User login
+// @Description Authenticate user and return token
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body services.LoginRequest true "Login request"
+// @Success 200 {object} services.LoginResponse
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 401 {object} utils.ErrorResponse
+// @Router /login [post]
 func (lc *LoginController) LoginHandler (c *gin.Context) {
 	var req services.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
